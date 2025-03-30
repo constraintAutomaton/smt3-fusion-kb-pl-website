@@ -1,0 +1,1 @@
+../smt3-fusion-kb-pl-generator/dataset/prolog/demon.pl
