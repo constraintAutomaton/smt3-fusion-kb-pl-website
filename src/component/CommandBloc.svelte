@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { get_demon_knowledge_base, get_rule_knowledge_base } from '$lib';
+	import { get_demon_knowledge_base, get_rule_knowledge_base, queryProlog } from '$lib';
 	import { isResult } from 'result-interface';
 	import { onMount } from 'svelte';
 
@@ -69,12 +69,18 @@
 		rule_button_clicked = !rule_button_clicked;
 	}
 
-	function handleKeydownInputBox(event: KeyboardEvent): void {
+	async function handleKeydownInputBox(event: KeyboardEvent): Promise<void> {
 		if (event.key === 'Enter') {
 			event.preventDefault();
 			history.push(current_command);
-			current_command = '';
 			putHistoryIntoLogBox();
+			const result = await queryProlog(current_command);
+			if (isResult(result)) {
+				for (const answer of result.value) {
+					console.log(answer);
+				}
+			}
+			current_command = '';
 		}
 	}
 </script>
