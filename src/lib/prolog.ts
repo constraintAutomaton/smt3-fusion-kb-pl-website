@@ -1,11 +1,11 @@
-import { init as initProlog, Prolog } from "scryer";
+import { init as initProlog, Prolog, Query } from "scryer";
 import { type Result, type SafePromise, isResult } from "result-interface";
 import { get_demon_knowledge_base, get_rule_knowledge_base } from "./knowledge_base";
 
 let prolog_instantiated = false;
 const PROLOG = new Prolog();
 
-export async function queryProlog(query: string): SafePromise<string, Error> {
+export async function queryProlog(query: string): SafePromise<Query, Error> {
     if (!prolog_instantiated) {
         const [demon_knowledge_base, rule_knowledge_base] = await Promise.all([
             get_demon_knowledge_base(),
@@ -31,12 +31,8 @@ export async function queryProlog(query: string): SafePromise<string, Error> {
     }
 
     const results = PROLOG.query(query);
-    const result_list = [];
-    for (const answer of results) {
-        result_list.push(JSON.stringify(answer.bindings));
-        //console.log(answer.bindings);
-    }
+
     return {
-        value: JSON.stringify(result_list)
+        value: results
     };
 }
