@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { get_demon_knowledge_base, get_rule_knowledge_base } from '$lib';
+	import { isResult } from 'result-interface';
 	import { onMount } from 'svelte';
+
+	const contactProviderMessage =
+		'was not able to access the knowledge base. Open an issue at https://github.com/constraintAutomaton/smt3-fusion-kb-pl-website/issues.';
 
 	let history: string[] = [];
 	let current_command = $state('');
@@ -11,15 +15,15 @@
 
 	let demon_info_button_clicked: boolean = false;
 	let rule_button_clicked: boolean = false;
-	let wasCtrl:boolean =false;
+	let wasCtrl: boolean = false;
 
-	function handleGlobalKey(event: KeyboardEvent):void {
+	function handleGlobalKey(event: KeyboardEvent): void {
 		const isCtrl = event.ctrlKey || event.metaKey;
-		if(wasCtrl && event.key == "v"){
+		if (wasCtrl && event.key == 'v') {
 			inputBox.focus();
 		}
 		if (isCtrl) {
-			wasCtrl = true
+			wasCtrl = true;
 			return;
 		}
 		inputBox.focus();
@@ -38,7 +42,13 @@
 		if (demon_info_button_clicked) {
 			putHistoryIntoLogBox();
 		} else {
-			logText = await get_demon_knowledge_base();
+			const res = await get_demon_knowledge_base();
+			if (isResult(res)) {
+				logText = res.value;
+			} else {
+				console.error('error to report:', res.error);
+				alert(contactProviderMessage);
+			}
 		}
 
 		demon_info_button_clicked = !demon_info_button_clicked;
@@ -48,7 +58,13 @@
 		if (rule_button_clicked) {
 			putHistoryIntoLogBox();
 		} else {
-			logText = await get_rule_knowledge_base();
+			const res = await get_rule_knowledge_base();
+			if (isResult(res)) {
+				logText = res.value;
+			} else {
+				console.error('error to report:', res.error);
+				alert(contactProviderMessage);
+			}
 		}
 		rule_button_clicked = !rule_button_clicked;
 	}

@@ -2,6 +2,18 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
+## Dependencies
+- [rust 1.77](https://www.rust-lang.org/)
+- [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
+
+## Building
+```sh
+cd ./scryer-prolog
+wasm-pack build --target web -- --no-default-features
+cd ..
+bun install
+```
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
