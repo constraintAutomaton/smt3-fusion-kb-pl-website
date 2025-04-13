@@ -1,4 +1,3 @@
-import { flushSync } from 'svelte';
 import { expect, describe, it, vi, type Mock, beforeEach } from 'vitest';
 import { queryProlog } from '../src/lib/prolog';
 import * as kb from '../src/lib/knowledge_base';
@@ -16,7 +15,7 @@ vi.mock('../src/lib/knowledge_base', async () => {
     };
 });
 
-describe("queryProlog", () => {
+describe(queryProlog.name, () => {
     const A_QUERY = "bar(X).";
     const MOCK_GET_DEMON = kb.get_demon_knowledge_base as Mock;
     const MOCK_GET_RULE = kb.get_rule_knowledge_base as Mock;

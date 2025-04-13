@@ -4,8 +4,8 @@
     "": {
       "name": "my-app",
       "dependencies": {
-        "result-interface": "^1.0.0",
-        "scryer": "^0.5.1",
+        "result-interface": "^2.0.0",
+        "scryer": "^0.7.0",
       },
       "devDependencies": {
         "@sveltejs/adapter-auto": "^4.0.0",
@@ -307,13 +307,13 @@
 
     "readdirp": ["readdirp@4.1.2", "", {}, "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg=="],
 
-    "result-interface": ["result-interface@1.0.4", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-/fKsaRKoQYk4Ujg+EtFAen6dpDYGYtkToZz1ulfzTSOtvWgwM2N/OQxId/YITLMo3qnRXcTaQPL7XuDQ6mDgJw=="],
+    "result-interface": ["result-interface@2.0.0", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-FD+Ei9KoZOG2i2EtR96bUBXPHoIxt3zdfVS43wyAmiJqSjhsRghQc/XwwA0HZJyKg9H4jbSx+/YwB3L2MDrhAA=="],
 
     "rollup": ["rollup@4.39.0", "", { "dependencies": { "@types/estree": "1.0.7" }, "optionalDependencies": { "@rollup/rollup-android-arm-eabi": "4.39.0", "@rollup/rollup-android-arm64": "4.39.0", "@rollup/rollup-darwin-arm64": "4.39.0", "@rollup/rollup-darwin-x64": "4.39.0", "@rollup/rollup-freebsd-arm64": "4.39.0", "@rollup/rollup-freebsd-x64": "4.39.0", "@rollup/rollup-linux-arm-gnueabihf": "4.39.0", "@rollup/rollup-linux-arm-musleabihf": "4.39.0", "@rollup/rollup-linux-arm64-gnu": "4.39.0", "@rollup/rollup-linux-arm64-musl": "4.39.0", "@rollup/rollup-linux-loongarch64-gnu": "4.39.0", "@rollup/rollup-linux-powerpc64le-gnu": "4.39.0", "@rollup/rollup-linux-riscv64-gnu": "4.39.0", "@rollup/rollup-linux-riscv64-musl": "4.39.0", "@rollup/rollup-linux-s390x-gnu": "4.39.0", "@rollup/rollup-linux-x64-gnu": "4.39.0", "@rollup/rollup-linux-x64-musl": "4.39.0", "@rollup/rollup-win32-arm64-msvc": "4.39.0", "@rollup/rollup-win32-ia32-msvc": "4.39.0", "@rollup/rollup-win32-x64-msvc": "4.39.0", "fsevents": "~2.3.2" }, "bin": { "rollup": "dist/bin/rollup" } }, "sha512-thI8kNc02yNvnmJp8dr3fNWJ9tCONDhp6TV35X6HkKGGs9E6q7YWCHbe5vKiTa7TAiNcFEmXKj3X/pG2b3ci0g=="],
 
     "sade": ["sade@1.8.1", "", { "dependencies": { "mri": "^1.1.0" } }, "sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A=="],
 
-    "scryer": ["scryer@0.5.1", "", {}, "sha512-tD7s1SWe1/Txg4x8BJlYyfNhhXOyX/qwVzuqa+b712CzDX8meNXlc5aGK4tHBSRc3JhPMDsfsn/WEQLLarEnkA=="],
+    "scryer": ["scryer@0.7.0", "", {}, "sha512-KVS/vFP4VTGfmFGUFkd9JoSEb0qTemkT4ZRQ/cxC9F+BqABXvjypul/S+LxZL0MpH4X1wgnTnUat1UKxggyxog=="],
 
     "semver": ["semver@7.7.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="],
 
