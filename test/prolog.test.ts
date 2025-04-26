@@ -5,77 +5,76 @@ import { IResult, isResult, Result } from 'result-interface';
 import { Query, Atom } from 'scryer';
 
 vi.mock('../src/lib/knowledge_base', async () => {
-    // Import the actual module to preserve non-mocked functions
-    const actual = await vi.importActual<typeof import('../src/lib/knowledge_base')>('../src/lib/knowledge_base');
+	// Import the actual module to preserve non-mocked functions
+	const actual = await vi.importActual<typeof import('../src/lib/knowledge_base')>(
+		'../src/lib/knowledge_base'
+	);
 
-    return {
-        ...actual,
-        get_demon_knowledge_base: vi.fn(),
-        get_rule_knowledge_base: vi.fn()
-    };
+	return {
+		...actual,
+		get_demon_knowledge_base: vi.fn(),
+		get_rule_knowledge_base: vi.fn()
+	};
 });
 
 describe(queryProlog.name, () => {
-    const A_QUERY = "bar(X).";
-    const MOCK_GET_DEMON = kb.get_demon_knowledge_base as Mock;
-    const MOCK_GET_RULE = kb.get_rule_knowledge_base as Mock;
+	const A_QUERY = 'bar(X).';
+	const MOCK_GET_DEMON = kb.get_demon_knowledge_base as Mock;
+	const MOCK_GET_RULE = kb.get_rule_knowledge_base as Mock;
 
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
 
-    it("should return an error given the demon knowledge base cannot be fetch", async () => {
-        MOCK_GET_DEMON.mockResolvedValueOnce({
-            error: ""
-        });
+	it('should return an error given the demon knowledge base cannot be fetch', async () => {
+		MOCK_GET_DEMON.mockResolvedValueOnce({
+			error: ''
+		});
 
+		expect(await queryProlog(A_QUERY)).toStrictEqual({
+			error: new Error('the demon knowledge base is not available')
+		});
+	});
 
-        expect(await queryProlog(A_QUERY)).toStrictEqual({
-            error: new Error("the demon knowledge base is not available")
-        });
-    });
+	it('should return an error given the rule knowledge base cannot be fetch', async () => {
+		MOCK_GET_DEMON.mockResolvedValueOnce({
+			value: 'foo(a). foo(b).'
+		});
 
-    it("should return an error given the rule knowledge base cannot be fetch", async () => {
-        MOCK_GET_DEMON.mockResolvedValueOnce({
-            value: "foo(a). foo(b)."
-        });
+		MOCK_GET_RULE.mockResolvedValueOnce({ error: '' });
 
-        MOCK_GET_RULE.mockResolvedValueOnce({ error: "" });
+		expect(await queryProlog(A_QUERY)).toStrictEqual({
+			error: new Error('the rule knowledge base is not available')
+		});
+	});
 
-        expect(await queryProlog(A_QUERY)).toStrictEqual({
-            error: new Error("the rule knowledge base is not available")
-        });
-    });
+	it('should return the query result', async () => {
+		MOCK_GET_DEMON.mockResolvedValueOnce({
+			value: 'foo(a). foo(b).'
+		});
 
-    it("should return the query result", async () => {
-        MOCK_GET_DEMON.mockResolvedValueOnce({
-            value: "foo(a). foo(b)."
-        });
+		MOCK_GET_RULE.mockResolvedValueOnce({ value: 'bar(X) :- foo(X) .' });
+		const result: Result<Query> = await queryProlog(A_QUERY);
 
-        MOCK_GET_RULE.mockResolvedValueOnce({ value: "bar(X) :- foo(X) ." });
-        const result: Result<Query> = await queryProlog(A_QUERY);
+		expect(isResult(result)).toBe(true);
 
-        expect(isResult(result)).toBe(true);
-
-        const query = (<IResult<Query>>result).value;
-        const expectedResult = [
-            {
-                bindings: {
-                    "X": new Atom("a")
-                }
-            },
-            {
-                bindings: {
-                    "X": new Atom("b")
-                }
-            },
-
-        ];
-        let i = 0;
-        for (const answer of query) {
-            expect(answer).toStrictEqual(expectedResult[i]);
-            i += 1;
-        }
-
-    });
+		const query = (<IResult<Query>>result).value;
+		const expectedResult = [
+			{
+				bindings: {
+					X: new Atom('a')
+				}
+			},
+			{
+				bindings: {
+					X: new Atom('b')
+				}
+			}
+		];
+		let i = 0;
+		for (const answer of query) {
+			expect(answer).toStrictEqual(expectedResult[i]);
+			i += 1;
+		}
+	});
 });

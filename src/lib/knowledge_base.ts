@@ -1,5 +1,4 @@
-import { type SafePromise, safePromise, isError } from "result-interface";
-
+import { type SafePromise, safePromise, isError } from 'result-interface';
 
 let demon_knowledge_base: string | undefined;
 let rule_knowledge_base: string | undefined;
@@ -25,38 +24,37 @@ export const LICENSE_KNOWLEDGE_BASE = `% smt-nocturne-prolog-kb-generator: A gen
 `;
 
 export async function get_demon_knowledge_base(): SafePromise<string, Error> {
-    if (demon_knowledge_base !== undefined) {
-        return { value: demon_knowledge_base };
-    }
-    const res = await safePromise(fetch("./demon.pl"));
-    if (isError(res)) {
-        // fetch on rejection should return an error
-        return {
-            error: <Error>res.error
-        }
-    }
+	if (demon_knowledge_base !== undefined) {
+		return { value: demon_knowledge_base };
+	}
+	const res = await safePromise(fetch('./demon.pl'));
+	if (isError(res)) {
+		// fetch on rejection should return an error
+		return {
+			error: <Error>res.error
+		};
+	}
 
-    demon_knowledge_base = (await res.value.text()).replace(LICENSE_KNOWLEDGE_BASE, "");
-    return { value: demon_knowledge_base };
+	demon_knowledge_base = (await res.value.text()).replace(LICENSE_KNOWLEDGE_BASE, '');
+	return { value: demon_knowledge_base };
 }
 
 export async function get_rule_knowledge_base(): SafePromise<string, Error> {
-    if (rule_knowledge_base !== undefined) {
-        return { value: rule_knowledge_base };
-    }
-    const res = await safePromise(fetch("./planner.pl"));
-    if (isError(res)) {
-        // fetch on rejection should return an error
-        return {
-            error: <Error>res.error
-        }
-    }
-    rule_knowledge_base = (await res.value.text()).replace(LICENSE_KNOWLEDGE_BASE, "");
-    return { value: rule_knowledge_base };
+	if (rule_knowledge_base !== undefined) {
+		return { value: rule_knowledge_base };
+	}
+	const res = await safePromise(fetch('./planner.pl'));
+	if (isError(res)) {
+		// fetch on rejection should return an error
+		return {
+			error: <Error>res.error
+		};
+	}
+	rule_knowledge_base = (await res.value.text()).replace(LICENSE_KNOWLEDGE_BASE, '');
+	return { value: rule_knowledge_base };
 }
 
-
 export function resetKnowledgeBase(): void {
-    rule_knowledge_base = undefined;
-    demon_knowledge_base = undefined;
+	rule_knowledge_base = undefined;
+	demon_knowledge_base = undefined;
 }
