@@ -1,5 +1,5 @@
-import { expect, describe, it, vi, type Mock, beforeEach } from 'vitest';
-import { queryProlog } from '../src/lib/prolog';
+import { expect, describe, it, vi, type Mock, beforeEach, assert } from 'vitest';
+import { queryProlog, WrapQueryIterator } from '../src/lib/prolog';
 import * as kb from '../src/lib/knowledge_base';
 import { IResult, isResult, Result } from 'result-interface';
 import { Query, Atom } from 'scryer';
@@ -54,11 +54,11 @@ describe(queryProlog.name, () => {
 		});
 
 		MOCK_GET_RULE.mockResolvedValueOnce({ value: 'bar(X) :- foo(X) .' });
-		const result: Result<Query> = await queryProlog(A_QUERY);
+		const result: Result<WrapQueryIterator> = await queryProlog(A_QUERY);
 
 		expect(isResult(result)).toBe(true);
 
-		const query = (<IResult<Query>>result).value;
+		const query = (<IResult<WrapQueryIterator>>result).value;
 		const expectedResult = [
 			{
 				bindings: {
@@ -77,4 +77,45 @@ describe(queryProlog.name, () => {
 			i += 1;
 		}
 	});
+
+	it('should return recover after a failed query', async () => {
+		MOCK_GET_DEMON.mockResolvedValue({
+			value: 'foo(a). foo(b).'
+		});
+
+		MOCK_GET_RULE.mockResolvedValue({ value: 'bar(X) :- foo(X) .' });
+		const result: Result<WrapQueryIterator> = await queryProlog("boo(X).");
+		expect(isResult(result)).toBe(true);
+
+		let i = 0;
+
+		for (const _ of (<IResult<WrapQueryIterator>>result).value){
+			i+=1
+		}
+		expect(i).toBe(0)
+
+
+		const new_result: Result<WrapQueryIterator> = await queryProlog(A_QUERY);
+		expect(isResult(result)).toBe(true);
+
+		const query = (<IResult<WrapQueryIterator>>new_result).value;
+		const expectedResult = [
+			{
+				bindings: {
+					X: new Atom('a')
+				}
+			},
+			{
+				bindings: {
+					X: new Atom('b')
+				}
+			}
+		];
+		i = 0;
+		for (const answer of query) {
+			expect(answer).toStrictEqual(expectedResult[i]);
+			i += 1;
+		}
+	});
+
 });

@@ -28,7 +28,7 @@
 		"vitest": "^3.1.1"
 	},
 	"dependencies": {
-		"result-interface": "^2.0.0",
+		"result-interface": "^2.3.1",
 		"scryer": "^0.7.0"
 	}
 }

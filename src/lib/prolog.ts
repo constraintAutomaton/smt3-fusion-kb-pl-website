@@ -1,11 +1,11 @@
-import { init as initProlog, Prolog, Query, EVENT_READY } from 'scryer';
-import { type SafePromise, isResult } from 'result-interface';
+import { init as initProlog, Prolog, Query, EVENT_READY, type Answer } from 'scryer';
+import { type SafePromise, isResult, result } from 'result-interface';
 import { get_demon_knowledge_base, get_rule_knowledge_base } from './knowledge_base';
 
 let prolog_instantiated = false;
 await initProlog();
 
-const PROLOG = new Prolog();
+let prolog = new Prolog();
 
 export interface IKnowledgeBaseWorkerMessage {
 	knowledge_base: string;
@@ -33,7 +33,7 @@ export function isKnowledgeBaseWorkerMessage(
 	return 'knowledge_base' in message;
 }
 
-export async function queryProlog(query: string): SafePromise<Query, Error> {
+export async function queryProlog(query: string): SafePromise<WrapQueryIterator, Error> {
 	if (!prolog_instantiated) {
 		const [demon_knowledge_base, rule_knowledge_base] = await Promise.all([
 			get_demon_knowledge_base(),
@@ -41,7 +41,7 @@ export async function queryProlog(query: string): SafePromise<Query, Error> {
 		]);
 
 		if (isResult(demon_knowledge_base)) {
-			PROLOG.consultText(demon_knowledge_base.value);
+			prolog.consultText(demon_knowledge_base.value);
 		} else {
 			return {
 				error: new Error('the demon knowledge base is not available')
@@ -49,7 +49,7 @@ export async function queryProlog(query: string): SafePromise<Query, Error> {
 		}
 
 		if (isResult(rule_knowledge_base)) {
-			PROLOG.consultText(rule_knowledge_base.value);
+			prolog.consultText(rule_knowledge_base.value);
 		} else {
 			return {
 				error: new Error('the rule knowledge base is not available')
@@ -58,18 +58,40 @@ export async function queryProlog(query: string): SafePromise<Query, Error> {
 		prolog_instantiated = true;
 	}
 
-	if (!PROLOG.busy) {
-		const results = PROLOG.query(query);
-		return {
-			value: results
-		};
+	if (!prolog.busy) {
+		const raw_it = prolog.query(query);
+		const it = new WrapQueryIterator(raw_it);
+		return result(it);
 	}
 	return new Promise((resolve) => {
-		PROLOG.addEventListener(EVENT_READY, () => {
-			const results = PROLOG.query(query);
-			resolve({
-				value: results
-			});
+		prolog.addEventListener(EVENT_READY, async () => {
+			const raw_it = prolog.query(query);
+			const it = new WrapQueryIterator(raw_it);
+			resolve(result(it));
 		});
 	});
+}
+
+export class WrapQueryIterator implements Iterable<Answer, boolean, void> {
+	private readonly it: Query
+	constructor(it: Query) {
+		this.it = it;
+	}
+
+	public [Symbol.iterator](): Iterator<Answer, boolean, void> {
+		return this;
+	}
+
+	public next(): IteratorResult<Answer, boolean> {
+		try {
+			return this.it.next()
+		} catch {
+			prolog = new Prolog();
+			prolog_instantiated = false;
+			return {
+				done: true,
+				value: false
+			}
+		}
+	}
 }
