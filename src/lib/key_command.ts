@@ -1,7 +1,8 @@
 export function generateGlobalKeyHandling(
-	wasCtrl: boolean,
 	inputBox: HTMLTextAreaElement
 ): (event: KeyboardEvent) => void {
+	let wasCtrl: boolean = false;
+
 	const handler: (event: KeyboardEvent) => void = (event: KeyboardEvent) => {
 		const isCtrl = event.ctrlKey || event.metaKey;
 		if (wasCtrl && event.key == 'v') {

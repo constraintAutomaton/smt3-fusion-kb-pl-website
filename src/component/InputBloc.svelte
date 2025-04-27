@@ -13,18 +13,19 @@
 
 	let inputBox: HTMLTextAreaElement;
 
-	let wasCtrl: boolean = false;
-
 	onMount(() => {
-		window.addEventListener('keydown', generateGlobalKeyHandling(wasCtrl, inputBox));
-		return () =>
-			window.removeEventListener('keydown', generateGlobalKeyHandling(wasCtrl, inputBox));
+		window.addEventListener('keydown', generateGlobalKeyHandling(inputBox));
+		return () => window.removeEventListener('keydown', generateGlobalKeyHandling(inputBox));
 	});
 
 	async function handleKeydownInputBox(event: KeyboardEvent): Promise<void> {
 		if (event.key === 'Enter') {
+			if (current_command.slice(-1) !== '.') {
+				current_command += '.';
+			}
 			event.preventDefault();
 			history.push(current_command);
+
 			const result = await queryProlog(current_command);
 			if (isResult(result)) {
 				for (const answer of result.value) {
@@ -37,11 +38,11 @@
 </script>
 
 <div class="command-box">
-	<div>
+	<div style="display: flex;">
 		<span style="display: inline-block;">?- </span>
 		<textarea
 			class="input-box"
-			style="display: inline-block;"
+			style="inline-flex; flex-grow:1;"
 			onkeydown={handleKeydownInputBox}
 			bind:this={inputBox}
 			bind:value={current_command}
